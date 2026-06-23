@@ -1,0 +1,6 @@
+gateway/bin/
+android_client/.dart_tool/
+android_client/build/
+*.db
+*.pb.go
+.DS_Store
