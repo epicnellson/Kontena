@@ -1,0 +1,26 @@
+syntax = "proto3";
+package kontena.v1;
+option go_package = "github.com/yourname/kontena/proto";
+
+message Record {
+  string id         = 1;
+  string schema     = 2;
+  string lang_code  = 3;
+  bytes  payload    = 4;
+  int64  created_at = 5;
+  int64  updated_at = 6;
+  string device_id  = 7;
+  int32  hop_count  = 8;
+}
+
+message SyncBatch {
+  repeated Record records  = 1;
+  int64  since_ts          = 2;
+  string sender_device_id  = 3;
+}
+
+message SyncResponse {
+  repeated Record new_records = 1;
+  repeated string conflicts   = 2;
+  int64  server_ts            = 3;
+}
