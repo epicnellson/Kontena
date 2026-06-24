@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/record.dart';
 import '../services/database_service.dart';
+import '../services/sync_service.dart';
 import 'create_record_screen.dart';
+import 'sync_screen.dart';
 
 class RecordsListScreen extends StatefulWidget {
   const RecordsListScreen({super.key});
@@ -38,6 +40,14 @@ class _RecordsListScreenState extends State<RecordsListScreen>
       appBar: AppBar(
         title: const Text('Kɔntena'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.sync),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(
+              builder: (_) => SyncScreen(
+                syncService: SyncService('http://YOUR_NGROK_OR_LAN_IP:8080'),
+              ),
+            )),
+          ),
           if (_pendingCount > 0)
             Padding(
               padding: const EdgeInsets.only(right: 16),
