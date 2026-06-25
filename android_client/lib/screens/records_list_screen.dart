@@ -4,6 +4,7 @@ import '../services/database_service.dart';
 import '../services/sync_service.dart';
 import 'create_record_screen.dart';
 import 'sync_screen.dart';
+import 'ble_screen.dart';
 
 class RecordsListScreen extends StatefulWidget {
   const RecordsListScreen({super.key});
@@ -40,6 +41,11 @@ class _RecordsListScreenState extends State<RecordsListScreen>
       appBar: AppBar(
         title: const Text('Kɔntena'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.bluetooth),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const BleScreen())),
+          ),
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () => Navigator.push(context, MaterialPageRoute(
