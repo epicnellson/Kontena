@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/record.dart';
 import '../services/database_service.dart';
 import '../services/sync_service.dart';
+import '../services/tts_service.dart';
 import 'create_record_screen.dart';
 import 'sync_screen.dart';
 import 'ble_screen.dart';
@@ -107,9 +108,21 @@ class _RecordsListScreenState extends State<RecordsListScreen>
             title: Text(rec.payload),
             subtitle: Text(rec.deviceId,
                 style: const TextStyle(fontSize: 11)),
-            trailing: rec.isPending
-                ? const Icon(Icons.circle, color: Colors.orange, size: 10)
-                : const Icon(Icons.cloud_done, color: Colors.green, size: 16),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.volume_up, size: 20,
+                      color: Colors.blueGrey),
+                  onPressed: () => TtsService.speak(rec.payload),
+                ),
+                Icon(
+                  rec.isPending ? Icons.circle : Icons.cloud_done,
+                  color: rec.isPending ? Colors.orange : Colors.green,
+                  size: rec.isPending ? 10 : 16,
+                ),
+              ],
+            ),
           );
         },
       ),
