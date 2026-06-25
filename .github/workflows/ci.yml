@@ -1,0 +1,63 @@
+name: Kɔntena CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  gateway-test:
+    name: Gateway — Go Build + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+          cache-dependency-path: gateway/go.sum
+
+      - name: Install gcc (for CGO/sqlite3)
+        run: sudo apt-get install -y gcc libsqlite3-dev
+
+      - name: Build gateway
+        run: cd gateway && go build -o bin/gateway ./cmd/server/
+
+      - name: Run tests
+        run: cd gateway && go test ./... -v -race
+
+  android-lint:
+    name: Android — Flutter Analyze + Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+          cache: true
+
+      - name: Flutter pub get
+        run: cd android_client && flutter pub get
+
+      - name: Flutter analyze
+        run: cd android_client && flutter analyze
+
+      - name: Flutter test
+        run: cd android_client && flutter test
+
+      - name: Build debug APK
+        run: cd android_client && flutter build apk --debug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kontena-debug-apk
+          path: android_client/build/app/outputs/apk/debug/app-debug.apk
+          retention-days: 7
