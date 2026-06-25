@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../services/ble_service.dart';
 
@@ -12,12 +13,13 @@ class _BleScreenState extends State<BleScreen> {
   final _ble = BleService();
   final Map<String, String> _peers = {};
   bool _scanning = false;
-  String _status = 'Tap fɔ luk mɔbail';
+  String _status = '';
   final Map<String, String> _syncResults = {};
 
   @override
   void initState() {
     super.initState();
+    _status = AppL10n.of(context)!.startScan;
     _ble.peersStream.listen((peers) {
       if (!mounted) return;
       setState(() => _peers
@@ -29,28 +31,28 @@ class _BleScreenState extends State<BleScreen> {
   Future<void> _toggleScan() async {
     if (_scanning) {
       await _ble.stopDiscovery();
-      setState(() { _scanning = false; _status = 'Stɔp luk'; });
+      setState(() { _scanning = false; _status = AppL10n.of(context)!.stopScan; });
     } else {
-      setState(() { _scanning = true; _peers.clear(); _status = 'Lukin fɔ mɔbail...'; });
+      setState(() { _scanning = true; _peers.clear(); _status = AppL10n.of(context)!.scanning; });
       await _ble.startDiscovery();
-      setState(() { _scanning = false; _status = '${_peers.length} mɔbail fayn'; });
+      setState(() { _scanning = false; _status = AppL10n.of(context)!.peersFound(_peers.length); });
     }
   }
 
   Future<void> _syncPeer(String deviceId, String name) async {
-    setState(() => _syncResults[deviceId] = 'Sinkin...');
+    setState(() => _syncResults[deviceId] = AppL10n.of(context)!.syncing);
     final device = BluetoothDevice.fromId(deviceId);
     final result = await _ble.syncWithPeer(device);
     if (!mounted) return;
     setState(() => _syncResults[deviceId] = result.success
-        ? '${result.pushed} push, ${result.pulled} pul ✓'
+        ? AppL10n.of(context)!.syncSuccess(result.pushed, result.pulled)
         : 'Ɛrɔ: ${result.error}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('BLE Mesh')),
+      appBar: AppBar(title: Text(AppL10n.of(context)!.bleScreenTitle)),
       body: Column(
         children: [
           Padding(
@@ -63,7 +65,7 @@ class _BleScreenState extends State<BleScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _toggleScan,
                   icon: Icon(_scanning ? Icons.stop : Icons.bluetooth_searching),
-                  label: Text(_scanning ? 'Stɔp' : 'Stat Luk',
+                  label: Text(_scanning ? AppL10n.of(context)!.stopScan : AppL10n.of(context)!.startScan,
                       style: const TextStyle(fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -77,7 +79,7 @@ class _BleScreenState extends State<BleScreen> {
           const Divider(),
           Expanded(
             child: _peers.isEmpty
-                ? const Center(child: Text('Nɔ mɔbail fayn.\nMek sho BLE dɛn on.',
+                ? Center(child: Text(AppL10n.of(context)!.noPeersFound,
                     textAlign: TextAlign.center))
                 : ListView(
                     children: _peers.entries.map((e) => Card(
@@ -87,10 +89,10 @@ class _BleScreenState extends State<BleScreen> {
                         title: Text(e.value.isEmpty ? e.key.substring(0, 8) : e.value),
                         subtitle: _syncResults[e.key] != null
                             ? Text(_syncResults[e.key]!)
-                            : const Text('Redi fɔ sink'),
+                            : Text(AppL10n.of(context)!.readyToSync),
                         trailing: ElevatedButton(
                           onPressed: () => _syncPeer(e.key, e.value),
-                          child: const Text('Sink'),
+                          child: Text(AppL10n.of(context)!.syncButton),
                         ),
                       ),
                     )).toList(),

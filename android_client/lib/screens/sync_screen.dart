@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/sync_service.dart';
 import '../services/database_service.dart';
@@ -11,7 +12,7 @@ class SyncScreen extends StatefulWidget {
 }
 
 class _SyncScreenState extends State<SyncScreen> {
-  String _status = 'Redi fɔ sink';
+  String _status = '';
   bool _syncing = false;
   int _pendingCount = 0;
   bool _online = false;
@@ -19,6 +20,7 @@ class _SyncScreenState extends State<SyncScreen> {
   @override
   void initState() {
     super.initState();
+    _status = AppL10n.of(context)!.readyToSync;
     _checkState();
   }
 
@@ -30,14 +32,14 @@ class _SyncScreenState extends State<SyncScreen> {
   }
 
   Future<void> _sync() async {
-    setState(() { _syncing = true; _status = 'Sinkin...'; });
+    setState(() { _syncing = true; _status = AppL10n.of(context)!.syncing; });
     final result = await widget.syncService.sync();
     await _checkState();
     if (!mounted) return;
     setState(() {
       _syncing = false;
       _status = result.success
-          ? '${result.pushed} push ✓  ${result.pulled} pul ✓'
+          ? AppL10n.of(context)!.syncSuccess(result.pushed, result.pulled)
           : 'Ɛrɔ: ${result.error}';
     });
   }
@@ -45,7 +47,7 @@ class _SyncScreenState extends State<SyncScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sink')),
+      appBar: AppBar(title: Text(AppL10n.of(context)!.syncTitle)),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -54,13 +56,15 @@ class _SyncScreenState extends State<SyncScreen> {
               Icon(_online ? Icons.wifi : Icons.wifi_off,
                   color: _online ? Colors.green : Colors.red),
               const SizedBox(width: 8),
-              Text(_online ? 'Yu kɔnɛkt' : 'Yu nɔ dɛn kɔnɛkt'),
+              Text(_online
+                  ? AppL10n.of(context)!.onlineBadge
+                  : AppL10n.of(context)!.offlineBadge),
             ]),
             const SizedBox(height: 16),
             Card(
               child: ListTile(
                 leading: const Icon(Icons.pending_actions, color: Colors.orange),
-                title: const Text('Rikod witin'),
+                title: Text(AppL10n.of(context)!.pendingRecords),
                 trailing: Text('$_pendingCount',
                     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               ),
@@ -76,7 +80,8 @@ class _SyncScreenState extends State<SyncScreen> {
                     ? const SizedBox(width: 18, height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2))
                     : const Icon(Icons.sync),
-                label: const Text('Sink Nau', style: TextStyle(fontSize: 18)),
+                label: Text(AppL10n.of(context)!.syncNow,
+                    style: const TextStyle(fontSize: 18)),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: Colors.green.shade700,

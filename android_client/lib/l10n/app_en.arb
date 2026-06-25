@@ -1,0 +1,49 @@
+{
+  "@@locale": "en",
+  "appTitle": "Kɔntena",
+  "@appTitle": { "description": "App title" },
+  "createRecord": "Kreat Rikod",
+  "saveButton": "Sev",
+  "syncNow": "Sink Nau",
+  "wordSchema": "Wod",
+  "phraseSchema": "Friez",
+  "proverbSchema": "Prɔvab",
+  "offlineBadge": "Yu nɔ dɛn kɔnɛkt",
+  "onlineBadge": "Yu kɔnɛkt",
+  "pendingCount": "{count} rikod witin",
+  "@pendingCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "peerFound": "Mɔbail fayn: {name}",
+  "@peerFound": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "savedSuccess": "Sev don! ✓",
+  "syncSuccess": "{pushed} push  {pulled} pul",
+  "@syncSuccess": {
+    "placeholders": {
+      "pushed": { "type": "int" },
+      "pulled": { "type": "int" }
+    }
+  },
+  "noRecordsYet": "Nɔ rikod yet.\nTap + fɔ kreat.",
+  "bleScreenTitle": "BLE Mesh",
+  "startScan": "Stat Luk",
+  "stopScan": "Stɔp",
+  "noPeersFound": "Nɔ mɔbail fayn.\nMek sho BLE dɛn on.",
+  "syncButton": "Sink",
+  "scanning": "Lukin fɔ mɔbail...",
+  "peersFound": "{count} mɔbail fayn",
+  "@peersFound": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "typeHere": "Rayt wod ɔ friez ya...",
+  "recordType": "Kayn Rikod",
+  "whatToSave": "Wɛtin yu wan sev?",
+  "speakNow": "Tɔk nau...",
+  "listenButton": "Yɛri",
+  "syncTitle": "Sink",
+  "readyToSync": "Redi fɔ sink",
+  "pendingRecords": "Rikod witin",
+  "syncing": "Sinkin..."
+}

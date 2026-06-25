@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   sqflite: ^2.3.3
   uuid: ^4.4.0
   path: ^1.9.0
@@ -26,3 +28,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true

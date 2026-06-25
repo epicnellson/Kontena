@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../models/record.dart';
 import '../services/database_service.dart';
 import '../services/sync_service.dart';
@@ -16,7 +17,6 @@ class _RecordsListScreenState extends State<RecordsListScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
   final _schemas = ['word', 'phrase', 'proverb'];
-  final _labels  = ['Wod', 'Friez', 'Prɔvab'];
   List<List<Record>> _records = [[], [], []];
   int _pendingCount = 0;
 
@@ -39,7 +39,7 @@ class _RecordsListScreenState extends State<RecordsListScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kɔntena'),
+        title: Text(AppL10n.of(context)!.appTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.bluetooth),
@@ -58,7 +58,7 @@ class _RecordsListScreenState extends State<RecordsListScreen>
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: Chip(
-                label: Text('$_pendingCount witin',
+                label: Text(AppL10n.of(context)!.pendingCount(_pendingCount),
                     style: const TextStyle(color: Colors.white, fontSize: 12)),
                 backgroundColor: Colors.orange.shade700,
               ),
@@ -66,7 +66,14 @@ class _RecordsListScreenState extends State<RecordsListScreen>
         ],
         bottom: TabBar(
           controller: _tabs,
-          tabs: _labels.map((l) => Tab(text: l)).toList(),
+          tabs: _schemas.map((s) {
+            switch (s) {
+              case 'word': return Tab(text: AppL10n.of(context)!.wordSchema);
+              case 'phrase': return Tab(text: AppL10n.of(context)!.phraseSchema);
+              case 'proverb': return Tab(text: AppL10n.of(context)!.proverbSchema);
+              default: return Tab(text: s);
+            }
+          }).toList(),
         ),
       ),
       body: TabBarView(
@@ -86,8 +93,9 @@ class _RecordsListScreenState extends State<RecordsListScreen>
 
   Widget _buildList(List<Record> records) {
     if (records.isEmpty) {
-      return const Center(child: Text('Nɔ rikod yet.\nTap + fɔ kreat.',
-          textAlign: TextAlign.center));
+      return Center(
+          child: Text(AppL10n.of(context)!.noRecordsYet,
+              textAlign: TextAlign.center));
     }
     return RefreshIndicator(
       onRefresh: _loadAll,

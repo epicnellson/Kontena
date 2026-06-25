@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/record.dart';
 import '../services/database_service.dart';
@@ -26,6 +27,15 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
     return id;
   }
 
+  String _schemaLabel(String s) {
+    switch (s) {
+      case 'word': return AppL10n.of(context)!.wordSchema;
+      case 'phrase': return AppL10n.of(context)!.phraseSchema;
+      case 'proverb': return AppL10n.of(context)!.proverbSchema;
+      default: return s;
+    }
+  }
+
   Future<void> _save() async {
     final text = _payloadCtrl.text.trim();
     if (text.isEmpty) {
@@ -46,10 +56,10 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
     setState(() { _saving = false; _payloadCtrl.clear(); });
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Sev don! ✓'),
+      SnackBar(
+        content: Text(AppL10n.of(context)!.savedSuccess),
         backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
     Navigator.pop(context, true);
@@ -58,31 +68,33 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Kreat Rikod')),
+      appBar: AppBar(title: Text(AppL10n.of(context)!.createRecord)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text('Kayn Rikod', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(AppL10n.of(context)!.recordType,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: _schema,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: _schemas.map((s) => DropdownMenuItem(
                 value: s,
-                child: Text(s == 'word' ? 'Wod' : s == 'phrase' ? 'Friez' : 'Prɔvab'),
+                child: Text(_schemaLabel(s)),
               )).toList(),
               onChanged: (v) => setState(() => _schema = v!),
             ),
             const SizedBox(height: 16),
-            const Text('Wɛtin yu wan sev?', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(AppL10n.of(context)!.whatToSave,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextField(
               controller: _payloadCtrl,
-              decoration: const InputDecoration(
-                hintText: 'Rayt wod ɔ friez ya...',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: AppL10n.of(context)!.typeHere,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 3,
             ),
@@ -96,7 +108,8 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
               ),
               child: _saving
                   ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text('Sev', style: TextStyle(fontSize: 18)),
+                  : Text(AppL10n.of(context)!.saveButton,
+                      style: const TextStyle(fontSize: 18)),
             ),
           ],
         ),
