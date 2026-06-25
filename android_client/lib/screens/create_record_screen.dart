@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/record.dart';
 import '../services/database_service.dart';
+import '../services/voice_service.dart';
 
 class CreateRecordScreen extends StatefulWidget {
   const CreateRecordScreen({super.key});
@@ -14,6 +15,7 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
   final _payloadCtrl = TextEditingController();
   String _schema = 'word';
   bool _saving = false;
+  bool _listening = false;
 
   final _schemas = ['word', 'phrase', 'proverb'];
 
@@ -65,6 +67,13 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
     Navigator.pop(context, true);
   }
 
+  Future<void> _startListening() async {
+    setState(() => _listening = true);
+    final text = await VoiceService.listen();
+    setState(() { _listening = false; });
+    if (text.isNotEmpty) _payloadCtrl.text = text;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,13 +99,36 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
             Text(AppL10n.of(context)!.whatToSave,
                 style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            TextField(
-              controller: _payloadCtrl,
-              decoration: InputDecoration(
-                hintText: AppL10n.of(context)!.typeHere,
-                border: const OutlineInputBorder(),
-              ),
-              maxLines: 3,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _payloadCtrl,
+                    decoration: InputDecoration(
+                      hintText: AppL10n.of(context)!.typeHere,
+                      border: const OutlineInputBorder(),
+                    ),
+                    maxLines: 3,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  children: [
+                    IconButton.filled(
+                      icon: const Icon(Icons.mic),
+                      color: Colors.white,
+                      style: IconButton.styleFrom(
+                          backgroundColor: _listening
+                              ? Colors.red.shade700
+                              : Colors.green.shade700),
+                      onPressed: _listening ? null : _startListening,
+                    ),
+                    Text(_listening ? '...' : AppL10n.of(context)!.listenButton,
+                        style: const TextStyle(fontSize: 10)),
+                  ],
+                ),
+              ],
             ),
             const SizedBox(height: 24),
             ElevatedButton(

@@ -20,6 +20,8 @@ dependencies:
   flutter_blue_plus: ^1.31.5
   permission_handler: ^11.3.1
   shared_preferences: ^2.2.3
+  vosk_flutter: ^0.3.0
+  record: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -29,3 +31,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/models/vosk-model-small-en-us-0.15/
