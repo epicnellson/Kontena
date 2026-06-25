@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:kontena/l10n/app_localizations.dart';
 import '../services/sync_service.dart';
 import '../services/database_service.dart';
 

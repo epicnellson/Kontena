@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:vosk_flutter/vosk_flutter.dart';
@@ -42,10 +41,10 @@ class VoiceService {
     StreamSubscription? sub;
 
     sub = stream.listen((chunk) async {
-      final result = await recognizer.acceptWaveformBytes(chunk);
-      if (result == RecognitionResult.finalResult) {
-        final text = await recognizer.getFinalResult();
-        if (!completer.isCompleted) completer.complete(_parseResult(text));
+      final isFinal = await recognizer.acceptWaveformBytes(chunk);
+      if (isFinal && !completer.isCompleted) {
+        final text = await recognizer.getResult();
+        completer.complete(_parseResult(text));
         sub?.cancel();
         await recorder.stop();
         recognizer.dispose();

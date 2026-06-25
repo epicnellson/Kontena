@@ -21,8 +21,8 @@ class SyncService {
   SyncService(this.baseUrl);
 
   Future<bool> isOnline() async {
-    final result = await Connectivity().checkConnectivity();
-    return result != ConnectivityResult.none;
+    final results = await Connectivity().checkConnectivity();
+    return results.every((r) => r != ConnectivityResult.none);
   }
 
   Future<int> _pushPending() async {

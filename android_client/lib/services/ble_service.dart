@@ -120,7 +120,7 @@ class BleService {
       }
 
       // Mark our sent records as synced
-      for (final r in pending) await DatabaseService.markSynced(r.id);
+      for (final r in pending) { await DatabaseService.markSynced(r.id); }
 
       await device.disconnect();
       return SyncResult(pushed: pending.length, pulled: pulled);

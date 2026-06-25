@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:kontena/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/record.dart';
 import '../services/database_service.dart';
@@ -87,7 +87,7 @@ class _CreateRecordScreenState extends State<CreateRecordScreen> {
                 style: const TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
-              value: _schema,
+              initialValue: _schema,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: _schemas.map((s) => DropdownMenuItem(
                 value: s,
