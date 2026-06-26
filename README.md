@@ -1,5 +1,7 @@
 # Kɔntena 🌐
 
+![CI](https://github.com/YOUR_USERNAME/kontena/actions/workflows/ci.yml/badge.svg)
+
 > Offline-first indigenous language mesh data platform for Sierra Leone.
 > Built for the Digital Public Goods Alliance (DPGA). MIT License.
 

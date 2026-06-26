@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kontena/l10n/app_localizations.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../services/ble_service.dart';
 
 class BleScreen extends StatefulWidget {
@@ -19,13 +18,20 @@ class _BleScreenState extends State<BleScreen> {
   @override
   void initState() {
     super.initState();
-    _status = AppL10n.of(context)!.startScan;
     _ble.peersStream.listen((peers) {
       if (!mounted) return;
       setState(() => _peers
         ..clear()
         ..addAll(peers));
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_status.isEmpty) {
+      setState(() => _status = AppL10n.of(context)!.startScan);
+    }
   }
 
   Future<void> _toggleScan() async {
@@ -41,8 +47,7 @@ class _BleScreenState extends State<BleScreen> {
 
   Future<void> _syncPeer(String deviceId, String name) async {
     setState(() => _syncResults[deviceId] = AppL10n.of(context)!.syncing);
-    final device = BluetoothDevice.fromId(deviceId);
-    final result = await _ble.syncWithPeer(device);
+    final result = await _ble.syncWithPeer(deviceId);
     if (!mounted) return;
     setState(() => _syncResults[deviceId] = result.success
         ? AppL10n.of(context)!.syncSuccess(result.pushed, result.pulled)

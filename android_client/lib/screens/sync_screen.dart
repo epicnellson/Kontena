@@ -19,8 +19,15 @@ class _SyncScreenState extends State<SyncScreen> {
   @override
   void initState() {
     super.initState();
-    _status = AppL10n.of(context)!.readyToSync;
     _checkState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_status.isEmpty) {
+      setState(() => _status = AppL10n.of(context)!.readyToSync);
+    }
   }
 
   Future<void> _checkState() async {
