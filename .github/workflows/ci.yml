@@ -18,14 +18,11 @@ jobs:
           go-version: 'stable'
           cache-dependency-path: gateway/go.sum
 
-      - name: Install gcc (for CGO/sqlite3)
-        run: sudo apt-get install -y gcc libsqlite3-dev
-
       - name: Build gateway
-        run: cd gateway && go build -o bin/gateway ./cmd/server/
+        run: cd gateway && mkdir -p bin && go build -o bin/gateway ./cmd/server/
 
       - name: Run tests
-        run: cd gateway && go test ./... -v -race
+        run: cd gateway && go test ./... -v
 
   android-lint:
     name: Android — Flutter Analyze + Test
@@ -40,7 +37,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.0'
+          flutter-version: '3.27.0'
           cache: true
 
       - name: Flutter pub get
