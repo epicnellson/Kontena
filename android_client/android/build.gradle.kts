@@ -21,9 +21,9 @@ subprojects {
 }
 
 subprojects {
-    plugins.whenPluginAdded {
-        if (hasPlugin("com.android.library") && !hasPlugin("com.android.application")) {
-            extensions.findByType<com.android.build.gradle.LibraryExtension>()?.let { ext ->
+    project.plugins.whenPluginAdded {
+        if (this is com.android.build.gradle.LibraryPlugin) {
+            project.extensions.findByType(com.android.build.api.dsl.LibraryExtension::class.java)?.let { ext ->
                 if (ext.namespace == null) {
                     ext.namespace = "com.example.${project.name.replace("-", "_")}"
                 }
