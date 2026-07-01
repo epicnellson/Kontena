@@ -43,6 +43,18 @@ jobs:
       - name: Flutter pub get
         run: cd android_client && flutter pub get
 
+      - name: Patch vosk_flutter namespace (AGP 9.x compat)
+        run: |
+          VOSK_BUILD=$(find ~/.pub-cache -path "*/vosk_flutter-*/android/build.gradle" | head -1)
+          if [ -n "$VOSK_BUILD" ]; then
+            echo "Patching $VOSK_BUILD"
+            sed -i '/^android {/a\    namespace "com.example.vosk_flutter"' "$VOSK_BUILD"
+            grep -n "namespace" "$VOSK_BUILD"
+          else
+            echo "ERROR: vosk_flutter build.gradle not found"
+            exit 1
+          fi
+
       - name: Flutter analyze
         run: cd android_client && flutter analyze
 

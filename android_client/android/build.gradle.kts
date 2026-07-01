@@ -15,21 +15,8 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
-
 subprojects {
     project.evaluationDependsOn(":app")
-}
-
-subprojects {
-    project.plugins.whenPluginAdded {
-        if (this is com.android.build.gradle.LibraryPlugin) {
-            project.extensions.findByType(com.android.build.api.dsl.LibraryExtension::class.java)?.let { ext ->
-                if (ext.namespace == null) {
-                    ext.namespace = "com.example.${project.name.replace("-", "_")}"
-                }
-            }
-        }
-    }
 }
 
 tasks.register<Delete>("clean") {
