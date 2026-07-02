@@ -48,8 +48,12 @@ jobs:
           VOSK_BUILD=$(find ~/.pub-cache -path "*/vosk_flutter-*/android/build.gradle" | head -1)
           if [ -n "$VOSK_BUILD" ]; then
             echo "Patching $VOSK_BUILD"
+            # Add namespace (AGP 9.x requirement)
             sed -i '/^android {/a\    namespace "com.example.vosk_flutter"' "$VOSK_BUILD"
-            grep -n "namespace" "$VOSK_BUILD"
+            # Update compileSdk to match Flutter 3.44 (AGP 9.x requires 34+)
+            sed -i 's/compileSdk 33/compileSdk 36/' "$VOSK_BUILD"
+            echo "--- Patched vosk_flutter build.gradle ---"
+            cat "$VOSK_BUILD"
           else
             echo "ERROR: vosk_flutter build.gradle not found"
             exit 1
