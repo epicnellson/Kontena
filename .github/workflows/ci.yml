@@ -76,9 +76,11 @@ jobs:
             echo "::error::BUILD FAILED (exit code $exit_code)"
             echo "--- LAST 80 LINES OF BUILD OUTPUT ---"
             tail -80 apk_build.log
-            echo "::group::Full build log"
-            cat apk_build.log
-            echo "::endgroup::"
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Build failed (exit code $exit_code)" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            grep -E "(FAILED|ERROR|error:|Error|BUILD FAILED|What went wrong|Could not|Cannot|not found|Missing)" apk_build.log | tail -30 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
           exit $exit_code
 
