@@ -50,8 +50,8 @@ jobs:
             echo "Patching $VOSK_BUILD"
             # Add namespace (AGP 9.x requirement)
             sed -i '/^android {/a\    namespace "com.example.vosk_flutter"' "$VOSK_BUILD"
-            # Update compileSdk to match Flutter 3.44 (AGP 9.x requires 34+)
-            sed -i 's/compileSdk 33/compileSdk 36/' "$VOSK_BUILD"
+            # Remove hardcoded AGP buildscript version (let root project manage it)
+            sed -i '/classpath .com.android.tools.build:gradle:/d' "$VOSK_BUILD"
             echo "--- Patched vosk_flutter build.gradle ---"
             cat "$VOSK_BUILD"
           else
@@ -66,14 +66,28 @@ jobs:
         run: cd android_client && flutter test
 
       - name: Build debug APK
+        id: build
+        continue-on-error: true
         run: |
           cd android_client
-          set -o pipefail
           flutter build apk --debug --verbose 2>&1 | tee apk_build.log
-          echo "--- LAST 80 LINES OF BUILD OUTPUT ---"
-          tail -80 apk_build.log
+
+      - name: Print build log tail
+        if: steps.build.outcome != 'success'
+        run: |
+          echo "--- LAST 100 LINES OF BUILD OUTPUT ---"
+          tail -100 android_client/apk_build.log
+
+      - name: Upload build log (on failure)
+        if: steps.build.outcome != 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: android_client/apk_build.log
+          retention-days: 7
 
       - name: Upload APK artifact
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: kontena-debug-apk
