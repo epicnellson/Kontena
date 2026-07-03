@@ -67,27 +67,23 @@ jobs:
 
       - name: Build debug APK
         id: build
-        continue-on-error: true
         run: |
           cd android_client
+          set +o pipefail
           flutter build apk --debug --no-split-per-abi --verbose 2>&1 | tee apk_build.log
-
-      - name: Print build log tail
-        if: steps.build.conclusion != 'success'
-        run: |
-          echo "--- LAST 100 LINES OF BUILD OUTPUT ---"
-          tail -100 android_client/apk_build.log
-
-      - name: Upload build log (on failure)
-        if: steps.build.conclusion != 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log
-          path: android_client/apk_build.log
-          retention-days: 7
+          exit_code=${PIPESTATUS[0]}
+          if [ $exit_code -ne 0 ]; then
+            echo "::error::BUILD FAILED (exit code $exit_code)"
+            echo "--- LAST 80 LINES OF BUILD OUTPUT ---"
+            tail -80 apk_build.log
+            echo "::group::Full build log"
+            cat apk_build.log
+            echo "::endgroup::"
+          fi
+          exit $exit_code
 
       - name: Upload APK artifact
-        if: steps.build.conclusion == 'success'
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: kontena-debug-apk
