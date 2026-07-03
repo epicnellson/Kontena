@@ -70,16 +70,16 @@ jobs:
         continue-on-error: true
         run: |
           cd android_client
-          flutter build apk --debug --verbose 2>&1 | tee apk_build.log
+          flutter build apk --debug --no-split-per-abi --verbose 2>&1 | tee apk_build.log
 
       - name: Print build log tail
-        if: steps.build.outcome != 'success'
+        if: steps.build.conclusion != 'success'
         run: |
           echo "--- LAST 100 LINES OF BUILD OUTPUT ---"
           tail -100 android_client/apk_build.log
 
       - name: Upload build log (on failure)
-        if: steps.build.outcome != 'success'
+        if: steps.build.conclusion != 'success'
         uses: actions/upload-artifact@v4
         with:
           name: build-log
@@ -87,7 +87,7 @@ jobs:
           retention-days: 7
 
       - name: Upload APK artifact
-        if: steps.build.outcome == 'success'
+        if: steps.build.conclusion == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: kontena-debug-apk
