@@ -70,7 +70,7 @@ jobs:
         run: |
           cd android_client
           set +o pipefail
-          flutter build apk --debug --no-split-per-abi --verbose 2>&1 | tee apk_build.log
+          flutter build apk --debug --verbose 2>&1 | tee apk_build.log
           exit_code=${PIPESTATUS[0]}
           if [ $exit_code -ne 0 ]; then
             echo "::error::BUILD FAILED (exit code $exit_code)"
